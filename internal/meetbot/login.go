@@ -43,29 +43,30 @@ func (m *Meetbot) HandleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	loginState, ok := m.loginStates[state]
 	if !ok {
 		m.log.Error().Msg("invalid state token")
-		w.Write([]byte("invalid state token"))
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("invalid state token"))
 		return
 	}
 
 	tok, err := m.oauthCfg.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		m.log.Error().Msg("failed to exchange code")
-		w.Write([]byte("failed to exchange code"))
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("failed to exchange code"))
 		return
 	}
 
 	err = m.db.SetUserRefreshToken(ctx, loginState.userID, tok.RefreshToken)
 	if err != nil {
 		m.log.Error().Msg("failed to save user token")
-		w.Write([]byte("failed to save user token"))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to save user token"))
 		return
 	}
 
 	m.replyTo(loginState.roomID, loginState.eventID, "Successfully logged in to Google Calendar")
 
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`
 		<html>
 			<head>
@@ -83,5 +84,4 @@ func (m *Meetbot) HandleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 			</body>
 		</html>
 	`))
-	w.WriteHeader(http.StatusOK)
 }

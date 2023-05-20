@@ -19,7 +19,7 @@
 
             src = ./.;
 
-            subPackages = [ "./cmd/meetbot" ];
+            subPackages = [ "cmd/meetbot" ];
 
             propagatedBuildInputs = [ pkgs.olm ];
 
