@@ -1,5 +1,6 @@
-config.yaml
-.direnv
-passwordfile
-meetbot.db
-result
+/config.yaml
+/.direnv
+/passwordfile
+/meetbot.db*
+/result
+/meetbot

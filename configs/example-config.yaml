@@ -37,6 +37,11 @@ logging:
     - type: stderr
       format: pretty-colored
 
-# Google Calendar credentials JSON. This value can also be specified via the
-# MEETBOT_GOOGLE_CREDENTIALS_JSON environment variable.
-google_credentials_json:
+# OAuth2 Configuration
+oauth2:
+  # The OAuth2 application credentials JSON. This value can also be specified
+  # via the MEETBOT_OAUTH2_CREDENTIALS_JSON environment variable.
+  credentials_json:
+  # The redirect URL. This value can also be specified via the
+  # MEETBOT_OAUTH2_REDIRECT_URL environment variable.
+  redirect_url:

@@ -36,14 +36,11 @@ type Meetbot struct {
 }
 
 func NewMeetbot(client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database, config config.Config) *Meetbot {
-	credsJSON, err := config.GetCredentialsJSON()
+	cfg, err := google.ConfigFromJSON(config.GetCredentialsJSON(), calendar.CalendarScope)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error loading Google credentials")
 	}
-	cfg, err := google.ConfigFromJSON(credsJSON, calendar.CalendarScope)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error loading Google credentials")
-	}
+	cfg.RedirectURL = config.GetRedirectURL()
 
 	wrapped := database.NewDatabase(db)
 	if err := wrapped.DB.Upgrade(); err != nil {

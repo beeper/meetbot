@@ -10,6 +10,11 @@ import (
 	"maunium.net/go/mautrix/util/dbutil"
 )
 
+type OAuth2Config struct {
+	CredentialsJSON string `yaml:"credentials_json"`
+	RedirectURL     string `yaml:"redirect_url"`
+}
+
 type Config struct {
 	Listen string `yaml:"listen"`
 
@@ -26,7 +31,7 @@ type Config struct {
 	// Logging configuration
 	Logging zeroconfig.Config `yaml:"logging"`
 
-	GoogleCredentialsJSON string `yaml:"google_credentials_json"`
+	OAuth2 OAuth2Config `yaml:"oauth2"`
 }
 
 func (c *Config) GetPassword() (string, error) {
@@ -42,10 +47,18 @@ func (c *Config) GetPassword() (string, error) {
 	return strings.TrimSpace(string(buf)), nil
 }
 
-func (c *Config) GetCredentialsJSON() ([]byte, error) {
-	if creds := os.Getenv("MEETBOT_GOOGLE_CREDENTIALS_JSON"); creds != "" {
-		return []byte(creds), nil
+func (c *Config) GetCredentialsJSON() []byte {
+	if creds := os.Getenv("MEETBOT_OAUTH2_CREDENTIALS_JSON"); creds != "" {
+		return []byte(creds)
 	}
 
-	return []byte(c.GoogleCredentialsJSON), nil
+	return []byte(c.OAuth2.CredentialsJSON)
+}
+
+func (c *Config) GetRedirectURL() string {
+	if url := os.Getenv("MEETBOT_OAUTH2_REDIRECT_URL"); url != "" {
+		return url
+	}
+
+	return c.OAuth2.RedirectURL
 }
