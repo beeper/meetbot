@@ -26,7 +26,8 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 	now := time.UnixMilli(evt.Timestamp)
 	conferenceRequestID := evt.ID.String()
 	meetEvent := &calendar.Event{
-		Summary: fmt.Sprintf("Meeting for %s", roomName.Name),
+		Summary:     fmt.Sprintf("Meeting for %s", roomName.Name),
+		Description: "This is a meeting created by Meetbot since there's no direct way to create Google Meet meetings.",
 		Start: &calendar.EventDateTime{
 			DateTime: now.Format("2006-01-02T15:04:05-07:00"),
 		},
@@ -39,11 +40,15 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 				ConferenceSolutionKey: &calendar.ConferenceSolutionKey{Type: "hangoutsMeet"},
 			},
 		},
-		Reminders: &calendar.EventReminders{UseDefault: false},
+		Reminders: &calendar.EventReminders{
+			UseDefault:      false,
+			ForceSendFields: []string{"Overrides"},
+		},
 	}
 
 	meetEvent, err = srv.Events.
 		Insert("primary", meetEvent).
+		Context(ctx).
 		ConferenceDataVersion(1). // Make sure the conference actually gets created.
 		Do()
 	if err != nil {
