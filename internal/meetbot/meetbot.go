@@ -2,6 +2,7 @@ package meetbot
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -27,6 +28,7 @@ type loginState struct {
 
 type Meetbot struct {
 	log    *zerolog.Logger
+	config config.Config
 	client *mautrix.Client
 	db     *database.Database
 
@@ -51,6 +53,7 @@ func NewMeetbot(client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database
 	return &Meetbot{
 		log:         log,
 		client:      client,
+		config:      config,
 		db:          wrapped,
 		oauthCfg:    cfg,
 		loginStates: map[string]loginState{},
@@ -111,15 +114,20 @@ func (m *Meetbot) HandleMessage(_ mautrix.EventSource, evt *event.Event) {
 }
 
 func (m *Meetbot) isMention(msg *event.MessageEventContent) bool {
+	mentionPrefix := fmt.Sprintf(`<a href="https://matrix.to/#/%s">`, m.client.UserID)
+	m.log.Info().Str("mention_prefix", mentionPrefix).Str("formatted_body", msg.FormattedBody).Msg("Checking for mention")
 	return strings.HasPrefix(msg.Body, "!meet") ||
 		strings.HasPrefix(msg.Body, "!meetbot") ||
-		strings.HasPrefix(msg.Body, "@meetbot")
+		strings.HasPrefix(msg.Body, "@meetbot") ||
+		strings.HasPrefix(msg.Body, fmt.Sprintf("%s:", m.config.Displayname)) ||
+		strings.HasPrefix(msg.FormattedBody, fmt.Sprintf(`<a href="https://matrix.to/#/%s">`, m.client.UserID))
 }
 
 func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *event.MessageEventContent) {
 	commandText := strings.TrimPrefix(msg.Body, "!meet")
 	commandText = strings.TrimPrefix(commandText, "!meetbot")
-	commandText = strings.TrimPrefix(commandText, "@meetbot")
+	commandText = strings.TrimPrefix(commandText, m.config.Displayname)
+	commandText = strings.TrimPrefix(commandText, ":")
 	commandText = strings.TrimSpace(commandText)
 
 	switch commandText {
