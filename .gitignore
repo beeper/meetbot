@@ -1,0 +1,5 @@
+config.yaml
+.direnv
+passwordfile
+meetbot.db
+result

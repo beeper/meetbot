@@ -23,7 +23,7 @@
 
             propagatedBuildInputs = [ pkgs.olm ];
 
-            vendorSha256 = "sha256-whKiWndBv4TX/AAAAAAAAAAK+PmdMomNkZpY84rDAbk=";
+            vendorSha256 = "sha256-fCD9JDa2Xk8WyshKVLAcIjmIjdoKrq/hBaGN2pMXjpU=";
           };
           devShells.default = pkgs.mkShell {
             packages = with pkgs; [
@@ -37,4 +37,3 @@
         }
       ));
 }
-
