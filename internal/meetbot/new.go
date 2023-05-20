@@ -24,6 +24,7 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 	}
 
 	now := time.UnixMilli(evt.Timestamp)
+	conferenceRequestID := evt.ID.String()
 	meetEvent := &calendar.Event{
 		Summary: fmt.Sprintf("Meeting for %s", roomName.Name),
 		Start: &calendar.EventDateTime{
@@ -34,18 +35,34 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 		},
 		ConferenceData: &calendar.ConferenceData{
 			CreateRequest: &calendar.CreateConferenceRequest{
-				RequestId:             evt.ID.String(),
+				RequestId:             conferenceRequestID,
 				ConferenceSolutionKey: &calendar.ConferenceSolutionKey{Type: "hangoutsMeet"},
 			},
 		},
+		Reminders: &calendar.EventReminders{UseDefault: false},
 	}
 
-	meetEvent, err = srv.Events.Insert("primary", meetEvent).Do()
+	meetEvent, err = srv.Events.
+		Insert("primary", meetEvent).
+		ConferenceDataVersion(1). // Make sure the conference actually gets created.
+		Do()
 	if err != nil {
 		log.Error().Err(err).Msg("Error creating event")
 		m.replyTo(evt.RoomID, evt.ID, "Error creating event")
 		return
 	}
 	log.Info().Interface("event", meetEvent).Msg("Created event")
+
+	for meetEvent.ConferenceData.CreateRequest.Status.StatusCode != "success" {
+		time.Sleep(1 * time.Second)
+		meetEvent, err = srv.Events.Get("primary", meetEvent.Id).Do()
+		if err != nil {
+			log.Error().Err(err).Msg("Error getting event")
+			m.replyTo(evt.RoomID, evt.ID, "Error getting event")
+			return
+		}
+	}
+	log.Info().Interface("event", meetEvent).Msg("Conference request succeeded")
+
 	m.replyTo(evt.RoomID, evt.ID, meetEvent.HangoutLink)
 }
