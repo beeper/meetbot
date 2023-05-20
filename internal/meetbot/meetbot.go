@@ -9,6 +9,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
@@ -57,6 +58,30 @@ func NewMeetbot(client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database
 	}
 }
 
+func (m *Meetbot) getCalendarService(ctx context.Context, userID id.UserID) (*calendar.Service, error) {
+	if service, ok := m.services[userID]; ok {
+		return service, nil
+	}
+
+	refreshToken, err := m.db.GetUserRefreshToken(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := m.oauthCfg.TokenSource(ctx, &oauth2.Token{RefreshToken: refreshToken}).Token()
+	if err != nil {
+		return nil, err
+	}
+
+	client := m.oauthCfg.Client(ctx, token)
+	srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		return nil, err
+	}
+	m.services[userID] = srv
+	return srv, nil
+}
+
 func (m *Meetbot) HandleMessage(_ mautrix.EventSource, evt *event.Event) {
 	log := log.With().
 		Str("event_type", evt.Type.String()).
@@ -102,6 +127,8 @@ func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *even
 		m.sendHelp(evt)
 	case "login":
 		m.handleLogin(ctx, evt)
+	case "ping":
+		m.handlePing(ctx, evt)
 	case "new", "":
 		m.handleNew(ctx, evt)
 	}

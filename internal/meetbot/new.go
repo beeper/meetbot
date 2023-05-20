@@ -6,35 +6,15 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"golang.org/x/oauth2"
 	"google.golang.org/api/calendar/v3"
-	"google.golang.org/api/option"
 	"maunium.net/go/mautrix/event"
 )
 
 func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
-	refreshToken, err := m.db.GetUserRefreshToken(ctx, evt.Sender)
+	srv, err := m.getCalendarService(ctx, evt.Sender)
 	if err != nil {
-		log.Error().Err(err).Msg("Error getting user refresh token")
 		m.replyTo(evt.RoomID, evt.ID, `You are not logged in. Use "!meet login" to log in to Google Calendar`)
 		return
-	}
-
-	if _, ok := m.services[evt.Sender]; !ok {
-		token, err := m.oauthCfg.TokenSource(ctx, &oauth2.Token{RefreshToken: refreshToken}).Token()
-		if err != nil {
-			log.Error().Err(err).Msg("Error getting token")
-			m.replyTo(evt.RoomID, evt.ID, "Error getting token")
-			return
-		}
-		client := m.oauthCfg.Client(ctx, token)
-		srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
-		if err != nil {
-			log.Error().Err(err).Msg("Error creating calendar service")
-			m.replyTo(evt.RoomID, evt.ID, "Error creating calendar service")
-			return
-		}
-		m.services[evt.Sender] = srv
 	}
 
 	var roomName event.RoomNameEventContent
@@ -42,8 +22,6 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 	if roomName.Name == "" {
 		roomName.Name = evt.RoomID.String()
 	}
-
-	srv := m.services[evt.Sender]
 
 	now := time.UnixMilli(evt.Timestamp)
 	meetEvent := &calendar.Event{
