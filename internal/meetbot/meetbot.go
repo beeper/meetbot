@@ -126,6 +126,7 @@ func (m *Meetbot) isMention(msg *event.MessageEventContent) bool {
 func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *event.MessageEventContent) {
 	commandText := strings.TrimPrefix(msg.Body, "!meet")
 	commandText = strings.TrimPrefix(commandText, "!meetbot")
+	commandText = strings.TrimPrefix(commandText, "@meetbot")
 	commandText = strings.TrimPrefix(commandText, m.config.Displayname)
 	commandText = strings.TrimPrefix(commandText, ":")
 	commandText = strings.TrimSpace(commandText)
