@@ -16,8 +16,7 @@
           packages.meetbot = pkgs.buildGoModule rec {
             pname = "meetbot";
             version = "unstable-2023-05-20";
-
-            src = ./.;
+            src = self;
 
             subPackages = [ "cmd/meetbot" ];
 
