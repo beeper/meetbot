@@ -25,6 +25,8 @@ type Config struct {
 	Displayname  string              `yaml:"displayname"`
 	AvatarURL    id.ContentURIString `yaml:"avatar_url"`
 
+	UserIDToEmail map[id.UserID]string `yaml:"user_id_to_email"`
+
 	// Database settings
 	Database dbutil.Config `yaml:"database"`
 

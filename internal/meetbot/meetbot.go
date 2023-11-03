@@ -130,6 +130,8 @@ func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *even
 	commandText = strings.TrimPrefix(commandText, m.config.Displayname)
 	commandText = strings.TrimPrefix(commandText, ":")
 	commandText = strings.TrimSpace(commandText)
+	commandText = strings.ToLower(commandText)
+	commandText = strings.SplitN(commandText, " ", 2)[0]
 
 	switch commandText {
 	case "help":

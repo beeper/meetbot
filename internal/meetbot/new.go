@@ -8,6 +8,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/api/calendar/v3"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/format"
+	"maunium.net/go/mautrix/id"
 )
 
 func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
@@ -23,11 +25,42 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 		roomName.Name = evt.RoomID.String()
 	}
 
+	msg := evt.Content.AsMessage()
+	var attendees []*calendar.EventAttendee
+	if msg.FormattedBody != "" {
+		mentionParser := format.HTMLParser{
+			PillConverter: func(displayname, mxid, eventID string, ctx format.Context) string {
+				if len(mxid) > 0 && mxid[0] == '@' {
+					if _, ok := ctx.ReturnData["mention"]; !ok {
+						ctx.ReturnData["mention"] = []string{}
+					}
+					ctx.ReturnData["mention"] = append(ctx.ReturnData["mention"].([]string), mxid)
+					return mxid
+				}
+				return displayname
+			},
+		}
+		formatContext := format.NewContext()
+		mentionParser.Parse(msg.FormattedBody, formatContext)
+		for _, mention := range formatContext.ReturnData["mention"].([]string) {
+			if mention == m.config.Username.String() {
+				continue
+			}
+			userID := id.UserID(mention)
+			if email, found := m.config.UserIDToEmail[userID]; found {
+				attendees = append(attendees, &calendar.EventAttendee{
+					Email: email,
+				})
+			}
+		}
+	}
+
 	now := time.UnixMilli(evt.Timestamp)
 	conferenceRequestID := evt.ID.String()
 	meetEvent := &calendar.Event{
 		Summary:     fmt.Sprintf("Meeting for %s", roomName.Name),
 		Description: "This is a meeting created by Meetbot since there's no direct way to create Google Meet meetings.",
+		Attendees:   attendees,
 		Start: &calendar.EventDateTime{
 			DateTime: now.Format("2006-01-02T15:04:05-07:00"),
 		},

@@ -22,7 +22,7 @@
 
             propagatedBuildInputs = [ pkgs.olm ];
 
-            vendorSha256 = "sha256-gawj2HQJamNBB5tJOdrYJG/+WBPBNAabJwsdoHzMkbs=";
+            vendorSha256 = "sha256-UFLL86hahs2AE2VrO4oKO73KtAbpwO5+l2Km25MRKk0=";
           };
           defaultPackage = packages.meetbot;
           devShells.default = pkgs.mkShell {
