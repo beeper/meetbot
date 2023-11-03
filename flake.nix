@@ -12,18 +12,19 @@
         let
           pkgs = import nixpkgs { system = system; };
         in
-        {
+        rec {
           packages.meetbot = pkgs.buildGoModule rec {
             pname = "meetbot";
-            version = "unstable-2023-05-20";
+            version = "unstable-2023-11-03";
             src = self;
 
             subPackages = [ "cmd/meetbot" ];
 
             propagatedBuildInputs = [ pkgs.olm ];
 
-            vendorSha256 = "sha256-fCD9JDa2Xk8WyshKVLAcIjmIjdoKrq/hBaGN2pMXjpU=";
+            vendorSha256 = "sha256-gawj2HQJamNBB5tJOdrYJG/+WBPBNAabJwsdoHzMkbs=";
           };
+          defaultPackage = packages.meetbot;
           devShells.default = pkgs.mkShell {
             packages = with pkgs; [
               go_1_19
