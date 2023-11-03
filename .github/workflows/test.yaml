@@ -15,6 +15,9 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
+      - name: Install libolm
+        run: sudo apt-get install libolm-dev libolm3
+
       - name: Install dependencies
         run: |
           go install golang.org/x/tools/cmd/goimports@latest
@@ -34,6 +37,9 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: true
+
+      - name: Install libolm
+        run: sudo apt-get install libolm-dev libolm3
 
       - name: Set up gotestfmt
         uses: GoTestTools/gotestfmt-action@v2
