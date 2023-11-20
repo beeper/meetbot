@@ -9,7 +9,7 @@ require (
 	go.mau.fi/util v0.2.0
 	go.mau.fi/zeroconfig v0.1.2
 	golang.org/x/oauth2 v0.13.0
-	google.golang.org/api v0.149.0
+	google.golang.org/api v0.151.0
 	gopkg.in/yaml.v3 v3.0.1
 	maunium.net/go/mautrix v0.16.1
 )
