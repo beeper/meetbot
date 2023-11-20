@@ -4,9 +4,9 @@ go 1.19
 
 require (
 	github.com/google/uuid v1.4.0
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/rs/zerolog v1.31.0
-	go.mau.fi/util v0.2.0
+	go.mau.fi/util v0.2.1
 	go.mau.fi/zeroconfig v0.1.2
 	golang.org/x/oauth2 v0.13.0
 	google.golang.org/api v0.149.0
