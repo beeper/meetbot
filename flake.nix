@@ -7,33 +7,24 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    (flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs { system = system; };
-        in
-        rec {
-          packages.meetbot = pkgs.buildGoModule rec {
-            pname = "meetbot";
-            version = "unstable-2023-11-03";
-            src = self;
+    (flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = import nixpkgs { system = system; };
+      in rec {
+        packages.meetbot = pkgs.buildGoModule {
+          pname = "meetbot";
+          version = "unstable-2023-11-03";
+          src = self;
 
-            subPackages = [ "cmd/meetbot" ];
+          subPackages = [ "cmd/meetbot" ];
 
-            propagatedBuildInputs = [ pkgs.olm ];
+          propagatedBuildInputs = [ pkgs.olm ];
 
-            vendorSha256 = "sha256-UFLL86hahs2AE2VrO4oKO73KtAbpwO5+l2Km25MRKk0=";
-          };
-          defaultPackage = packages.meetbot;
-          devShells.default = pkgs.mkShell {
-            packages = with pkgs; [
-              go_1_19
-              olm
-              pre-commit
-              gotools
-              gopls
-            ];
-          };
-        }
-      ));
+          vendorSha256 = "sha256-UFLL86hahs2AE2VrO4oKO73KtAbpwO5+l2Km25MRKk0=";
+        };
+        defaultPackage = packages.meetbot;
+
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [ go_1_21 olm pre-commit gotools gopls ];
+        };
+      }));
 }
