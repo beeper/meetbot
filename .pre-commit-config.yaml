@@ -17,4 +17,10 @@ repos:
           - "github.com/beeper/meetbot"
           - "-w"
       - id: go-vet-repo-mod
+        args:
+          - "-tags"
+          - "goolm"
       - id: go-staticcheck-repo-mod
+        args:
+          - "-tags"
+          - "goolm"

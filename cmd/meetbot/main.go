@@ -89,10 +89,10 @@ func main() {
 
 	// Set the bot's display name and avatar
 	if config.Displayname != "" {
-		client.SetDisplayName(config.Displayname)
+		client.SetDisplayName(context.Background(), config.Displayname)
 	}
 	if config.AvatarURL != "" {
-		client.SetAvatarURL(config.AvatarURL.ParseOrIgnore())
+		client.SetAvatarURL(context.Background(), config.AvatarURL.ParseOrIgnore())
 	}
 
 	meetbot := meetbot.NewMeetbot(client, logger, db, config)
@@ -104,7 +104,7 @@ func main() {
 		}
 		if evt.Content.AsMember().Membership == event.MembershipInvite {
 			log.Info().Str("room_id", evt.RoomID.String()).Msg("Invited to room")
-			_, err := client.JoinRoom(evt.RoomID.String(), "", nil)
+			_, err := client.JoinRoom(context.TODO(), evt.RoomID.String(), "", nil)
 			if err != nil {
 				log.Error().Err(err).Str("room_id", evt.RoomID.String()).Msg("Failed to join room")
 			}

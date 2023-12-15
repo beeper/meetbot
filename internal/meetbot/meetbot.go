@@ -135,7 +135,7 @@ func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *even
 
 	switch commandText {
 	case "help":
-		m.sendHelp(evt)
+		m.sendHelp(ctx, evt)
 	case "login":
 		m.handleLogin(ctx, evt)
 	case "ping":

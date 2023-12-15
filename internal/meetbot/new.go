@@ -15,12 +15,12 @@ import (
 func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 	srv, err := m.getCalendarService(ctx, evt.Sender)
 	if err != nil {
-		m.replyTo(evt.RoomID, evt.ID, `You are not logged in. Use "!meet login" to log in to Google Calendar`)
+		m.replyTo(ctx, evt.RoomID, evt.ID, `You are not logged in. Use "!meet login" to log in to Google Calendar`)
 		return
 	}
 
 	var roomName event.RoomNameEventContent
-	m.client.StateEvent(evt.RoomID, event.StateRoomName, "", &roomName)
+	m.client.StateEvent(ctx, evt.RoomID, event.StateRoomName, "", &roomName)
 	if roomName.Name == "" {
 		roomName.Name = evt.RoomID.String()
 	}
@@ -86,7 +86,7 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 		Do()
 	if err != nil {
 		log.Error().Err(err).Msg("Error creating event")
-		m.replyTo(evt.RoomID, evt.ID, "Error creating event")
+		m.replyTo(ctx, evt.RoomID, evt.ID, "Error creating event")
 		return
 	}
 	log.Info().Interface("event", meetEvent).Msg("Created event")
@@ -96,11 +96,11 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 		meetEvent, err = srv.Events.Get("primary", meetEvent.Id).Do()
 		if err != nil {
 			log.Error().Err(err).Msg("Error getting event")
-			m.replyTo(evt.RoomID, evt.ID, "Error getting event")
+			m.replyTo(ctx, evt.RoomID, evt.ID, "Error getting event")
 			return
 		}
 	}
 	log.Info().Interface("event", meetEvent).Msg("Conference request succeeded")
 
-	m.replyTo(evt.RoomID, evt.ID, meetEvent.HangoutLink)
+	m.replyTo(ctx, evt.RoomID, evt.ID, meetEvent.HangoutLink)
 }

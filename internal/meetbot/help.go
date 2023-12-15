@@ -1,6 +1,10 @@
 package meetbot
 
-import "maunium.net/go/mautrix/event"
+import (
+	"context"
+
+	"maunium.net/go/mautrix/event"
+)
 
 var (
 	helpText = `Usage: !meet [command]
@@ -24,8 +28,8 @@ The default command is "new".<br><br>
 </ul>`
 )
 
-func (m *Meetbot) sendHelp(evt *event.Event) {
-	m.client.SendMessageEvent(evt.RoomID, event.EventMessage, &event.MessageEventContent{
+func (m *Meetbot) sendHelp(ctx context.Context, evt *event.Event) {
+	m.client.SendMessageEvent(ctx, evt.RoomID, event.EventMessage, &event.MessageEventContent{
 		MsgType:       event.MsgText,
 		Body:          helpText,
 		Format:        event.FormatHTML,

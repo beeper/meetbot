@@ -15,7 +15,7 @@ func (m *Meetbot) handleLogin(ctx context.Context, evt *event.Event) {
 	if !strings.Contains(strings.TrimPrefix(evt.Content.AsMessage().Body, "login"), "--force") {
 		userTok, err := m.db.GetUserRefreshToken(ctx, evt.Sender)
 		if err == nil && userTok != "" {
-			m.client.SendText(evt.RoomID, "You are already logged in to Google Calendar")
+			m.client.SendText(ctx, evt.RoomID, "You are already logged in to Google Calendar")
 			return
 		}
 	}
@@ -27,7 +27,7 @@ func (m *Meetbot) handleLogin(ctx context.Context, evt *event.Event) {
 		eventID: evt.ID,
 	}
 	url := m.oauthCfg.AuthCodeURL(stateToken, oauth2.AccessTypeOffline)
-	m.client.SendMessageEvent(evt.RoomID, event.EventMessage, &event.MessageEventContent{
+	m.client.SendMessageEvent(ctx, evt.RoomID, event.EventMessage, &event.MessageEventContent{
 		MsgType:       event.MsgText,
 		Body:          fmt.Sprintf("Login to Google Calendar: %s", url),
 		Format:        event.FormatHTML,
@@ -64,7 +64,7 @@ func (m *Meetbot) HandleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.replyTo(loginState.roomID, loginState.eventID, "Successfully logged in to Google Calendar")
+	m.replyTo(ctx, loginState.roomID, loginState.eventID, "Successfully logged in to Google Calendar")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`
