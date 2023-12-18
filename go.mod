@@ -3,7 +3,7 @@ module github.com/beeper/meetbot
 go 1.19
 
 require (
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/rs/zerolog v1.31.0
 	go.mau.fi/util v0.2.1
