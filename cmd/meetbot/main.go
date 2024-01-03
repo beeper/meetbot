@@ -103,10 +103,10 @@ func main() {
 			return
 		}
 		if evt.Content.AsMember().Membership == event.MembershipInvite {
-			log.Info().Str("room_id", evt.RoomID.String()).Msg("Invited to room")
+			log.Info().Stringer("room_id", evt.RoomID).Msg("Invited to room")
 			_, err := client.JoinRoom(context.TODO(), evt.RoomID.String(), "", nil)
 			if err != nil {
-				log.Error().Err(err).Str("room_id", evt.RoomID.String()).Msg("Failed to join room")
+				log.Error().Err(err).Stringer("room_id", evt.RoomID).Msg("Failed to join room")
 			}
 		}
 	})

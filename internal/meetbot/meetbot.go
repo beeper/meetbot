@@ -87,8 +87,8 @@ func (m *Meetbot) getCalendarService(ctx context.Context, userID id.UserID) (*ca
 
 func (m *Meetbot) HandleMessage(_ mautrix.EventSource, evt *event.Event) {
 	log := log.With().
-		Str("event_type", evt.Type.String()).
-		Str("sender", evt.Sender.String()).
+		Stringer("event_type", &evt.Type).
+		Stringer("sender", evt.Sender).
 		Str("room_id", string(evt.RoomID)).
 		Str("event_id", string(evt.ID)).
 		Logger()
