@@ -12,14 +12,14 @@
       in rec {
         packages.meetbot = pkgs.buildGoModule {
           pname = "meetbot";
-          version = "unstable-2023-12-15";
+          version = "unstable-2023-01-16";
           src = self;
 
           tags = [ "goolm" ];
 
           subPackages = [ "cmd/meetbot" ];
 
-          vendorHash = "sha256-J/QUEtppdLPKNIYNDIPLlcOgYIOMWeXUUTpN2ICjpYc=";
+          vendorHash = "sha256-3a4H2wDy13EwApNVttMu5SaXILGcGYm51XppIDNYk9k=";
         };
         defaultPackage = packages.meetbot;
 

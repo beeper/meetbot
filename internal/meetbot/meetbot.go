@@ -38,7 +38,7 @@ type Meetbot struct {
 	services    map[id.UserID]*calendar.Service
 }
 
-func NewMeetbot(client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database, config config.Config) *Meetbot {
+func NewMeetbot(ctx context.Context, client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database, config config.Config) *Meetbot {
 	cfg, err := google.ConfigFromJSON(config.GetCredentialsJSON(), calendar.CalendarScope)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error loading Google credentials")
@@ -46,7 +46,7 @@ func NewMeetbot(client *mautrix.Client, log *zerolog.Logger, db *dbutil.Database
 	cfg.RedirectURL = config.GetRedirectURL()
 
 	wrapped := database.NewDatabase(db)
-	if err := wrapped.DB.Upgrade(); err != nil {
+	if err := wrapped.DB.Upgrade(ctx); err != nil {
 		log.Fatal().Err(err).Msg("Error upgrading database")
 	}
 
@@ -85,14 +85,14 @@ func (m *Meetbot) getCalendarService(ctx context.Context, userID id.UserID) (*ca
 	return srv, nil
 }
 
-func (m *Meetbot) HandleMessage(_ mautrix.EventSource, evt *event.Event) {
+func (m *Meetbot) HandleMessage(ctx context.Context, evt *event.Event) {
 	log := log.With().
 		Stringer("event_type", &evt.Type).
 		Stringer("sender", evt.Sender).
 		Str("room_id", string(evt.RoomID)).
 		Str("event_id", string(evt.ID)).
 		Logger()
-	ctx := log.WithContext(context.TODO())
+	ctx = log.WithContext(ctx)
 
 	if evt.Sender == m.client.UserID {
 		log.Debug().Msg("Ignoring own message")
@@ -100,7 +100,7 @@ func (m *Meetbot) HandleMessage(_ mautrix.EventSource, evt *event.Event) {
 	}
 
 	isDM := false
-	members, err := m.client.StateStore.GetRoomJoinedOrInvitedMembers(evt.RoomID)
+	members, err := m.client.StateStore.GetRoomJoinedOrInvitedMembers(ctx, evt.RoomID)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting room members")
 	} else if len(members) == 2 {

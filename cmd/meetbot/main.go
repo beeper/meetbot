@@ -48,6 +48,7 @@ func main() {
 	}
 	log.Logger = *logger
 	zerolog.DefaultContextLogger = logger
+	ctx := logger.WithContext(context.TODO())
 
 	log.Info().Msg("Meetbot service starting...")
 
@@ -81,7 +82,7 @@ func main() {
 	}
 	cryptoHelper.DBAccountID = config.Username.String()
 
-	err = cryptoHelper.Init()
+	err = cryptoHelper.Init(ctx)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize crypto helper")
 	}
@@ -95,16 +96,16 @@ func main() {
 		client.SetAvatarURL(context.Background(), config.AvatarURL.ParseOrIgnore())
 	}
 
-	meetbot := meetbot.NewMeetbot(client, logger, db, config)
+	meetbot := meetbot.NewMeetbot(ctx, client, logger, db, config)
 
 	syncer := client.Syncer.(*mautrix.DefaultSyncer)
-	syncer.OnEventType(event.StateMember, func(_ mautrix.EventSource, evt *event.Event) {
+	syncer.OnEventType(event.StateMember, func(ctx context.Context, evt *event.Event) {
 		if evt.StateKey == nil || *evt.StateKey != config.Username.String() {
 			return
 		}
 		if evt.Content.AsMember().Membership == event.MembershipInvite {
 			log.Info().Stringer("room_id", evt.RoomID).Msg("Invited to room")
-			_, err := client.JoinRoom(context.TODO(), evt.RoomID.String(), "", nil)
+			_, err := client.JoinRoom(ctx, evt.RoomID.String(), "", nil)
 			if err != nil {
 				log.Error().Err(err).Stringer("room_id", evt.RoomID).Msg("Failed to join room")
 			}
