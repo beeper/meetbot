@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/google/uuid v1.5.0
-	github.com/mattn/go-sqlite3 v1.14.19
+	github.com/mattn/go-sqlite3 v1.14.20
 	github.com/rs/zerolog v1.31.0
 	go.mau.fi/util v0.3.0
 	go.mau.fi/zeroconfig v0.1.2
