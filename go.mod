@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/google/uuid v1.5.0
 	github.com/mattn/go-sqlite3 v1.14.19
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	go.mau.fi/util v0.3.0
 	go.mau.fi/zeroconfig v0.1.2
 	golang.org/x/oauth2 v0.16.0
