@@ -12,19 +12,18 @@
       in rec {
         packages.meetbot = pkgs.buildGoModule {
           pname = "meetbot";
-          version = "unstable-2023-01-16";
+          version = "unstable-2024-07-10";
           src = self;
+          subPackages = [ "cmd/meetbot" ];
 
           tags = [ "goolm" ];
 
-          subPackages = [ "cmd/meetbot" ];
-
-          vendorHash = "sha256-3a4H2wDy13EwApNVttMu5SaXILGcGYm51XppIDNYk9k=";
+          vendorHash = "sha256-JLUCKKfIBlyBu/SK2u/rMt/CZXQfe5o9jIq4GOu2wC8=";
         };
         defaultPackage = packages.meetbot;
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ go_1_21 pre-commit gotools go-tools ];
+          packages = with pkgs; [ go pre-commit gotools go-tools ];
         };
       }));
 }

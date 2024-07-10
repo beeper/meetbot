@@ -40,7 +40,7 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 				return displayname
 			},
 		}
-		formatContext := format.NewContext()
+		formatContext := format.NewContext(ctx)
 		mentionParser.Parse(msg.FormattedBody, formatContext)
 		for _, mention := range formatContext.ReturnData["mention"].([]string) {
 			if mention == m.config.Username.String() {
