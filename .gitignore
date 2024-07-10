@@ -1,6 +1,7 @@
-/config.yaml
 /.direnv
-/passwordfile
-/meetbot.db*
-/result
+/.envrc.user
+/config.yaml
 /meetbot
+/meetbot.db*
+/passwordfile
+/result
