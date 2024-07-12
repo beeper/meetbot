@@ -85,22 +85,22 @@ func (m *Meetbot) handleNew(ctx context.Context, evt *event.Event) {
 		ConferenceDataVersion(1). // Make sure the conference actually gets created.
 		Do()
 	if err != nil {
-		log.Error().Err(err).Msg("Error creating event")
+		log.Err(err).Msg("Error creating event")
 		m.replyTo(ctx, evt.RoomID, evt.ID, "Error creating event")
 		return
 	}
-	log.Info().Interface("event", meetEvent).Msg("Created event")
+	log.Info().Any("event", meetEvent).Msg("Created event")
 
 	for meetEvent.ConferenceData.CreateRequest.Status.StatusCode != "success" {
 		time.Sleep(1 * time.Second)
 		meetEvent, err = srv.Events.Get("primary", meetEvent.Id).Do()
 		if err != nil {
-			log.Error().Err(err).Msg("Error getting event")
+			log.Err(err).Msg("Error getting event")
 			m.replyTo(ctx, evt.RoomID, evt.ID, "Error getting event")
 			return
 		}
 	}
-	log.Info().Interface("event", meetEvent).Msg("Conference request succeeded")
+	log.Info().Any("event", meetEvent).Msg("Conference request succeeded")
 
 	m.replyTo(ctx, evt.RoomID, evt.ID, meetEvent.HangoutLink)
 }

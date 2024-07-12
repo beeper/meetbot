@@ -107,7 +107,7 @@ func main() {
 			log.Info().Stringer("room_id", evt.RoomID).Msg("Invited to room")
 			_, err := client.JoinRoom(ctx, evt.RoomID.String(), "", nil)
 			if err != nil {
-				log.Error().Err(err).Stringer("room_id", evt.RoomID).Msg("Failed to join room")
+				log.Err(err).Stringer("room_id", evt.RoomID).Msg("Failed to join room")
 			}
 		}
 	})

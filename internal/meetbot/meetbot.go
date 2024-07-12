@@ -102,7 +102,7 @@ func (m *Meetbot) HandleMessage(ctx context.Context, evt *event.Event) {
 	isDM := false
 	members, err := m.client.StateStore.GetRoomJoinedOrInvitedMembers(ctx, evt.RoomID)
 	if err != nil {
-		log.Error().Err(err).Msg("Error getting room members")
+		log.Err(err).Msg("Error getting room members")
 	} else if len(members) == 2 {
 		isDM = true
 	}
@@ -115,12 +115,11 @@ func (m *Meetbot) HandleMessage(ctx context.Context, evt *event.Event) {
 
 func (m *Meetbot) isMention(msg *event.MessageEventContent) bool {
 	mentionPrefix := fmt.Sprintf(`<a href="https://matrix.to/#/%s">`, m.client.UserID)
-	m.log.Info().Str("mention_prefix", mentionPrefix).Str("formatted_body", msg.FormattedBody).Msg("Checking for mention")
 	return strings.HasPrefix(msg.Body, "!meet") ||
 		strings.HasPrefix(msg.Body, "!meetbot") ||
 		strings.HasPrefix(msg.Body, "@meetbot") ||
 		strings.HasPrefix(msg.Body, fmt.Sprintf("%s:", m.config.Displayname)) ||
-		strings.HasPrefix(msg.FormattedBody, fmt.Sprintf(`<a href="https://matrix.to/#/%s">`, m.client.UserID))
+		strings.HasPrefix(msg.FormattedBody, mentionPrefix)
 }
 
 func (m *Meetbot) handleCommand(ctx context.Context, evt *event.Event, msg *event.MessageEventContent) {
