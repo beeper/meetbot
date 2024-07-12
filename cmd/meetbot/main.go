@@ -99,6 +99,7 @@ func main() {
 	meetbot := meetbot.NewMeetbot(ctx, client, logger, db, config)
 
 	syncer := client.Syncer.(*mautrix.DefaultSyncer)
+	client.Syncer.(mautrix.ExtensibleSyncer).OnSync(client.DontProcessOldEvents)
 	syncer.OnEventType(event.StateMember, func(ctx context.Context, evt *event.Event) {
 		if evt.StateKey == nil || *evt.StateKey != config.Username.String() {
 			return
