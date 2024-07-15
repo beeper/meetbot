@@ -9,7 +9,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/rs/zerolog v1.33.0
 	go.mau.fi/util v0.5.1-0.20240702075351-577617730cb7
-	go.mau.fi/zeroconfig v0.1.2
+	go.mau.fi/zeroconfig v0.1.3
 	golang.org/x/oauth2 v0.21.0
 	google.golang.org/api v0.188.0
 	gopkg.in/yaml.v3 v3.0.1
