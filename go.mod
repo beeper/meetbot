@@ -8,19 +8,18 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/rs/zerolog v1.33.0
-	go.mau.fi/util v0.5.1-0.20240702075351-577617730cb7
-	go.mau.fi/zeroconfig v0.1.2
+	go.mau.fi/util v0.6.0
+	go.mau.fi/zeroconfig v0.1.3
 	golang.org/x/oauth2 v0.21.0
 	google.golang.org/api v0.188.0
 	gopkg.in/yaml.v3 v3.0.1
-	maunium.net/go/mautrix v0.19.0-beta.1.0.20240710182547-603a34c37a77
+	maunium.net/go/mautrix v0.19.0
 )
 
 require (
 	cloud.google.com/go/auth v0.7.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.3 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
-	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
